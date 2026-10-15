@@ -113,4 +113,4 @@ Hundreds of reports in one PR are fine.
 
 ## Exporting from your own pipeline
 
-[scripts/report.py](scripts/report.py) reads and writes report files: `dumps(meta, write_up)` turns the front matter dict and the write-up into the file's text. [scripts/import_hf_dashboard.py](scripts/import_hf_dashboard.py) shows a full conversion: `attempt_to_report()` turns one pipeline record into a report file.
+[scripts/report.py](scripts/report.py) reads and writes report files: `dumps(meta, write_up)` turns the front matter dict and the write-up into the file's text, so a pipeline that already produces one record per run can write a report per run with it.

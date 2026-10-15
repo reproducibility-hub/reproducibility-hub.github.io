@@ -18,7 +18,6 @@ scripts/
   report.py                                 # read/write report files (shared by the scripts below)
   validate.py                               # schema + file-name + venue + PR ownership checks (CI)
   build.py                                  # reports/ -> _site/ (index.json + one write-up file per run)
-  import_hf_dashboard.py                    # one-time import from the old Hugging Face dashboard
 site/                                       # static front end (no build step, no framework)
 .github/workflows/
   validate.yml                              # runs on every PR
@@ -34,10 +33,3 @@ pip install jsonschema pyyaml
 python scripts/validate.py
 python scripts/build.py && python -m http.server -d _site 8000
 ```
-
-## Setting up the GitHub side
-
-1. Create the GitHub organization `reproducibility-hub` and a repo named `reproducibility-hub.github.io`. This name serves the site at the root URL.
-2. Settings → Pages → Source: **GitHub Actions**.
-3. Settings → Branches: protect `main` and require the `validate` check plus one review.
-4. Settings → Actions → General: require approval for workflows from first-time contributors.
