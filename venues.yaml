@@ -1,0 +1,5 @@
+# Venues a report can name in paper.venue. Maintained by the hub's maintainers;
+# the key is the folder name under reports/.
+acl-2026-main:
+  name: ACL 2026 (main)
+  url: https://aclanthology.org/events/acl-2026/

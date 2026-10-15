@@ -1,0 +1,5 @@
+_site/
+__pycache__/
+.DS_Store
+# The saved Hugging Face page this repo was imported from
+Reproduce Dashboard - a Hugging Face Space by kuanhaoh*

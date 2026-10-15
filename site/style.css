@@ -1,0 +1,139 @@
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --text: #1d1d1f; --muted: #6b6b70; --line: #e4e4e0;
+    --accent: #2f5bd3; --hover: #f1f3f8;
+    --v-blocked: #7a55b8; --v-nocode: #8a8a8f; --v-other: #55555a;
+    --f-code: #c8372d; --f-bug: #d0661a; --f-eval: #1f8a7a; --f-data: #8a6d1f; --f-baseline: #7a55b8; --f-rerun: #2f7fd3;
+    --c1: #1f8a4c; --c15: #3d9238; --c2: #5b9a2a; --c3: #c98a0b; --c4: #d0661a; --c45: #cc5122; --c5: #c8372d; --c6: #7a1f1a;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151517; --panel: #1e1e21; --text: #ececee; --muted: #9a9aa2; --line: #2e2e33;
+      --accent: #7ea2ff; --hover: #26272c;
+      --v-blocked: #a585e0; --v-nocode: #8e8e96; --v-other: #a0a0a8;
+      --f-code: #ef6358; --f-bug: #f08a45; --f-eval: #45c6b0; --f-data: #d4b05a; --f-baseline: #a585e0; --f-rerun: #5aa2f0;
+      --c1: #3fbf73; --c15: #66c263; --c2: #8cc653; --c3: #e2a93b; --c4: #f08a45; --c45: #f0764e; --c5: #ef6358; --c6: #a8302a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif; }
+  .wrap { max-width: 1440px; margin: 0 auto; padding: 28px 20px 60px; }
+  header h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+  header p { margin: 4px 0 0; color: var(--muted); }
+  header p b { color: var(--text); font-weight: 600; }
+  .grid { display: grid; gap: 12px; }
+  .lead { grid-template-columns: minmax(180px, 220px) 1fr; margin: 22px 0 14px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px;
+         margin: 0 0 14px; padding: 12px 16px; border: 1px dashed var(--accent); border-radius: 10px;
+         color: var(--text); text-decoration: none; background: var(--panel); }
+  .cta:hover { background: var(--hover); }
+  .cta-go { color: var(--accent); font-weight: 600; white-space: nowrap; }
+  .stat .n { font-size: 26px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .stat .l { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .stat .sub { color: var(--muted); font-size: 12px; }
+  .bar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; background: var(--line); margin: 6px 0 10px; }
+  .bar span { height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    color: #fff; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 0 2px rgba(0,0,0,.45); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 8px; font-weight: 600; }
+  .halves { grid-template-columns: 1fr 1fr; margin-bottom: 14px; }
+  @media (max-width: 800px) { .halves { grid-template-columns: 1fr; } }
+  @media (max-width: 800px) { .lead { grid-template-columns: 1fr; } }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .scroll { overflow-x: auto; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 4px 0 10px; }
+  .controls input[type=search], .controls select {
+    background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+    padding: 7px 10px; font: inherit; }
+  .controls input[type=search] { flex: 1 1 260px; }
+  .controls label { color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .ms { position: relative; }
+  .ms summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--text);
+                border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; white-space: nowrap; }
+  .ms summary::-webkit-details-marker { display: none; }
+  .ms .ms-menu { position: absolute; z-index: 5; top: calc(100% + 4px); left: 0; min-width: 100%;
+                 background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px;
+                 box-shadow: 0 6px 18px rgba(0,0,0,.15); }
+  .ms .ms-menu label { color: var(--text); padding: 3px 2px; white-space: nowrap; cursor: pointer; }
+  .ms .ms-menu .ms-clear { color: var(--accent); font-size: 12px; cursor: pointer; padding: 4px 2px 0; display: block; }
+  /* Column filters live in the table header; the menu is position:fixed so the
+     table's horizontal scroll container doesn't clip it. */
+  th .ms { display: inline-block; }
+  th .ms summary { background: none; border: 0; padding: 0; font: inherit; color: inherit; }
+  th .ms summary::after { content: " ▾"; color: var(--muted); font-size: 11px; }
+  th .ms.active summary { color: var(--accent); }
+  th .ms .ms-menu { position: fixed; top: auto; left: auto; min-width: 180px; max-height: 60vh; overflow-y: auto;
+                    font-weight: 400; text-transform: none; letter-spacing: normal; }
+  th .ms .ms-menu label { display: flex; align-items: center; gap: 6px; }
+  #rows tr { cursor: pointer; }
+  #rows tr:hover td { background: var(--hover); }
+  .id { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .title { font-weight: 550; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500;
+           letter-spacing: .02em; color: #fff; white-space: nowrap; }
+  .muted { color: var(--muted); }
+  .cbadge { display: inline-block; padding: 1px 7px; border-radius: 6px; font-size: 11px; font-weight: 600;
+            border: 1px solid currentColor; white-space: nowrap; }
+  td.paper { min-width: 320px; }
+  .flags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .empty { text-align: center; color: var(--muted); padding: 30px; }
+  dialog { width: min(920px, 96vw); max-height: 90vh; border: 1px solid var(--line); border-radius: 12px;
+           padding: 0; background: var(--panel); color: var(--text); }
+  dialog::backdrop { background: rgba(0,0,0,.45); }
+  .dhead { position: sticky; top: 0; background: var(--panel); border-bottom: 1px solid var(--line);
+           padding: 16px 20px; display: flex; gap: 12px; align-items: flex-start; }
+  .dhead h3 { margin: 0 0 4px; font-size: 17px; }
+  .dhead button { margin-left: auto; background: none; border: 1px solid var(--line); color: var(--text);
+                  border-radius: 8px; padding: 4px 10px; cursor: pointer; font: inherit; }
+  .dbody { padding: 16px 20px 24px; }
+  .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px 16px; margin: 0 0 14px; }
+  .meta div span { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .links a { color: var(--accent); margin-right: 14px; }
+  .history { margin: 0 0 16px; font-size: 13px; }
+  .history a { color: var(--accent); cursor: pointer; }
+  .report { border-top: 1px solid var(--line); padding-top: 12px; overflow-wrap: anywhere; }
+  .report table { font-size: 13px; margin: 8px 0; }
+  .report pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto; }
+  .report code { font-family: var(--mono); font-size: 12.5px; }
+  .report h1 { font-size: 18px; } .report h2 { font-size: 15px; text-transform: none; letter-spacing: 0; color: var(--text); margin-top: 18px; }
+  .report h3 { font-size: 14px; }
+
+  /* --- additions for the multi-agent hub --- */
+  .bar { gap: 2px; background: none; }
+  .bar span { border-radius: 2px; }
+  .bar span:first-child { border-radius: 6px 2px 2px 6px; }
+  .bar span:last-child { border-radius: 2px 6px 6px 2px; }
+  .bar span:only-child { border-radius: 6px; }
+  .bar span > b { font-weight: inherit; }
+  header { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 24px; }
+  header .brand { flex: 1 1 auto; }
+  header h1 a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+  nav { display: flex; gap: 4px; }
+  nav a { color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 8px; font-weight: 550; }
+  nav a:hover { background: var(--hover); color: var(--text); }
+  nav a.on { background: var(--panel); color: var(--text); border: 1px solid var(--line); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0 0; }
+  .toolbar label { color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .toolbar select { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+                    padding: 7px 10px; font: inherit; max-width: 100%; }
+  a { color: var(--accent); }
+  .prose { max-width: 820px; }
+  .prose h2 { margin-top: 26px; }
+  .prose pre { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto;
+               font: 12.5px/1.5 var(--mono); }
+  .prose code { font-family: var(--mono); font-size: 12.5px; }
+  .prose li { margin: 4px 0; }
+  .runs-list { display: flex; flex-direction: column; gap: 4px; margin: 0 0 16px; font-size: 13px; }
+  .runs-list a { cursor: pointer; display: flex; gap: 8px; align-items: center; padding: 4px 6px; border-radius: 6px; color: var(--text); }
+  .runs-list a:hover { background: var(--hover); }
+  .runs-list a.cur { background: var(--hover); font-weight: 600; }
+  @media (max-width: 600px) { .wrap { padding: 20px 16px 48px; } td.paper { min-width: 220px; } }
+  [hidden] { display: none !important; }
+  .prose code { overflow-wrap: anywhere; }
+  .prose td { overflow-wrap: anywhere; }

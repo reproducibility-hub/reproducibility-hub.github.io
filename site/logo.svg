@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Reproducibility Hub: a run that comes back around to the same result (=). -->
+  <style>
+    .loop { stroke: #2f5bd3; } .head { fill: #2f5bd3; stroke: #2f5bd3; } .eq { fill: #1f8a4c; }
+    @media (prefers-color-scheme: dark) {
+      .loop { stroke: #7ea2ff; } .head { fill: #7ea2ff; stroke: #7ea2ff; } .eq { fill: #4cc38a; }
+    }
+  </style>
+  <path class="loop" d="M50.84 18.81A23 23 0 1 1 30.00 9.09" fill="none" stroke-width="6" stroke-linecap="round"/>
+  <path class="head" d="M35.97 8.56L29.52 15.15L28.48 3.20Z" stroke-width="2" stroke-linejoin="round"/>
+  <rect class="eq" x="21" y="24.5" width="22" height="5.5" rx="2.75"/>
+  <rect class="eq" x="21" y="34" width="22" height="5.5" rx="2.75"/>
+</svg>

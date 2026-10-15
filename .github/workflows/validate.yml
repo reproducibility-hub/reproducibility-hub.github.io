@@ -1,0 +1,25 @@
+name: validate
+on:
+  pull_request:
+    paths: ["reports/**", "venues.yaml", "schema/**", "scripts/**", "site/**"]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema pyyaml
+      - name: Schema, references, and ownership of changed files
+        env:
+          GH_TOKEN: ${{ github.token }}  # lets validate.py ask the GitHub API who added a report
+        run: >
+          python scripts/validate.py
+          --base origin/${{ github.base_ref }}
+          --author ${{ github.event.pull_request.user.login }}
+      - name: Site still builds
+        run: python scripts/build.py

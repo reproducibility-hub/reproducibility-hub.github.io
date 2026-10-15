@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reproducibility Hub</title>
+<meta name="description" content="Released, but reproducible? Agent-executed reproducibility reports for research code releases: what ran, what had to be fixed, and whether the numbers match.">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1><a href="#/"><img src="logo.svg" alt="" width="32" height="32">Reproducibility Hub</a></h1>
+      <p id="subtitle"><b>Released, but reproducible?</b> Agent-executed reproducibility reports for research code releases.</p>
+    </div>
+    <nav>
+      <a href="#/" data-view="dashboard">Dashboard</a>
+      <a href="#/contribute" data-view="contribute">Contribute</a>
+    </nav>
+  </header>
+
+  <div class="toolbar" id="toolbar">
+    <label>Venue <select id="venue"></select></label>
+    <span class="muted" id="updated" style="font-size:12px"></span>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="view" id="v-dashboard">
+    <section class="grid lead">
+      <div class="card stat" id="stat"></div>
+      <div class="card">
+        <h2>Codebase <span class="muted" id="ctot"></span></h2>
+        <div class="bar" id="cbar"></div>
+        <div class="legend" id="cleg"></div>
+      </div>
+    </section>
+
+    <section class="grid halves">
+      <div class="card">
+        <h2>Result · as released <span class="muted" id="rtot-rel"></span></h2>
+        <div class="bar" id="rbar-rel"></div>
+        <div class="legend" id="rleg-rel"></div>
+      </div>
+      <div class="card">
+        <h2>Result · after fixes <span class="muted" id="rtot-fix"></span></h2>
+        <div class="bar" id="rbar-fix"></div>
+        <div class="legend" id="rleg-fix"></div>
+      </div>
+    </section>
+    <a class="cta" href="#/contribute">
+      <span><b>Ran an agent on a paper's released code?</b> Add your report: one Markdown file per run, by pull request.</span>
+      <span class="cta-go">How to contribute →</span>
+    </a>
+    <p class="muted" id="distnote" style="margin:0 0 14px;font-size:12px"></p>
+
+    <section class="card">
+      <div class="controls">
+        <input type="search" id="q" placeholder="Search title or paper ID…">
+        <label><input type="checkbox" id="all"> Show every attempt</label>
+        <span class="muted" id="count"></span>
+        <span class="muted" style="font-size:12px">Filter by clicking a column header ▾</span>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr>
+            <th>Paper · <details class="ms" id="ff"><summary>Flags</summary><div class="ms-menu"></div></details></th>
+            <th><details class="ms" id="cf"><summary>Codebase</summary><div class="ms-menu"></div></details></th>
+            <th><details class="ms" id="rf"><summary title="Result with the release as published, no source edits">As released</summary><div class="ms-menu"></div></details></th>
+            <th><details class="ms" id="mf"><summary title="Result after the agent's fixes">After fixes</summary><div class="ms-menu"></div></details></th>
+            <th><details class="ms" id="gf"><summary>Coverage</summary><div class="ms-menu"></div></details></th>
+            <th>Harness<div class="muted" style="font-weight:normal">Model</div></th>
+            <th class="num">Runtime</th><th>Timestamp</th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Contribute -->
+  <div class="view prose" id="v-contribute" hidden>
+    <h2>How to add your agent's results</h2>
+    <p>Every agent run is one Markdown file in the GitHub repo. To add yours, open a pull request. CI checks each file against the schema. Once a maintainer merges the PR, the site rebuilds automatically.</p>
+    <ol>
+      <li><b>Add one file per run</b>: <code>reports/&lt;venue&gt;/&lt;paper_id&gt;_&lt;YYYY-MM-DD-T-HH-MM-SS&gt;.md</code>. Its YAML front matter holds three short sections; everything else goes in the free-form Markdown write-up after it:
+<pre>---
+paper:
+  venue: acl-2026-main            # listed in venues.yaml
+  paper_id: 2026.acl-long.1015
+  title: ...
+  paper_url: https://aclanthology.org/2026.acl-long.1015
+  code_link: https://github.com/...
+environment:
+  timestamp: 2026-10-08-T-02-26-50   # run start, same as the file name
+  harness: Claude Code
+  model: Opus 5.5
+  code_commit: 731051d            # the released version the run started from
+  gpu: 1x H200
+  runtime: 918.8                  # minutes
+result:
+  codebase_completeness: MISSING_SCRIPTS
+  result_as_released: DOES_NOT_RUN
+  result_after_fixes: NUMBERS_MATCH
+  coverage: FULL
+  flags: []                       # optional
+  comparisons:                    # optional: one row per number vs. the paper
+  - {source: "Table 2", metric: F1, setting: ours, paper: 71.2, ours: 70.8, match: NUMBERS_MATCH}
+---
+
+Free-form write-up: what was run, paper-vs-reproduced numbers,
+every change made to the code, discrepancies, ...</pre></li>
+      <li>If the paper already has a report, copy its <code>paper</code> section. Anyone can add a report; only the person who added a report can change or delete it.</li>
+      <li>Run <code>python scripts/validate.py</code> locally, then open the PR.</li>
+    </ol>
+    <h2>What the labels mean</h2>
+    <div id="glossary"></div>
+    <p><a id="repo-link" href="#">Full guide: CONTRIBUTING.md on GitHub →</a></p>
+  </div>
+</div>
+
+<dialog id="detail">
+  <div class="dhead">
+    <div><div class="id" id="d-id"></div><h3 id="d-title"></h3><div id="d-badge"></div></div>
+    <button id="d-close">Close</button>
+  </div>
+  <div class="dbody">
+    <div class="links" id="d-links"></div>
+    <div class="meta" id="d-meta"></div>
+    <h2>Codebase completeness</h2>
+    <div id="d-cbadge" style="margin-bottom:16px"></div>
+    <h2>Result</h2>
+    <div id="d-result" style="margin-bottom:8px"></div>
+    <div class="scroll" id="d-comp" style="margin-bottom:16px"></div>
+    <h2>Runs of this paper</h2>
+    <div class="runs-list" id="d-history"></div>
+    <h2>Report</h2>
+    <div class="report" id="d-report"></div>
+  </div>
+</dialog>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

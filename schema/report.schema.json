@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reproducibility-hub.github.io/schema/report.schema.json",
+  "title": "Report",
+  "description": "One agent run on one paper: the YAML front matter of reports/<venue>/<paper_id>_<YYYY-MM-DD-T-HH-MM-SS>.md. Everything else goes in the free-form Markdown write-up after the front matter.",
+  "type": "object",
+  "required": [
+    "paper",
+    "environment",
+    "result"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "match": {
+      "enum": [
+        "NUMBERS_MATCH",
+        "TREND_MATCH",
+        "MIXED",
+        "NO_MATCH",
+        "DOES_NOT_RUN"
+      ]
+    },
+    "number_match": {
+      "enum": [
+        "NUMBERS_MATCH",
+        "TREND_MATCH",
+        "MIXED",
+        "NO_MATCH",
+        "NOT_COMPARABLE",
+        "DOES_NOT_RUN",
+        null
+      ],
+      "description": "Match for a single number. NOT_COMPARABLE: obtained, but the setting differs too much to compare fairly. null: not run."
+    }
+  },
+  "properties": {
+    "paper": {
+      "type": "object",
+      "required": [
+        "venue",
+        "paper_id",
+        "title",
+        "paper_url",
+        "code_link"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "venue": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "description": "A key of venues.yaml; must equal the folder name under reports/."
+        },
+        "paper_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$",
+          "description": "Venue-native ID (ACL Anthology ID, OpenReview ID, arXiv ID, ...). Must match the file name; quote arXiv IDs so YAML keeps them strings."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paper_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "code_link": {
+          "type": "string",
+          "format": "uri",
+          "description": "The authors' code repository that was run."
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "required": [
+        "timestamp",
+        "harness",
+        "model",
+        "gpu"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}-T-\\d{2}-\\d{2}-\\d{2}$",
+          "description": "Run start time, YYYY-MM-DD-T-HH-MM-SS (e.g. 2026-10-08-T-02-26-50). Must match the file name."
+        },
+        "harness": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Agent harness, e.g. Claude Code, OpenHands, Codex CLI."
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Backbone model, e.g. Opus 5.5."
+        },
+        "code_commit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{7,40}$",
+          "description": "Commit of code_link the run started from (the released version, before any fixes)."
+        },
+        "gpu": {
+          "type": "string",
+          "minLength": 1,
+          "description": "GPUs used, e.g. 1x H200, or none."
+        },
+        "runtime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Wall-clock time of the run, in minutes."
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": [
+        "codebase_completeness",
+        "result_as_released",
+        "result_after_fixes",
+        "coverage"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "codebase_completeness": {
+          "enum": [
+            "RUNS_AS_IS",
+            "TRIVIAL_FIXES",
+            "MINOR_FIXES",
+            "MAJOR_FIXES",
+            "MISSING_SCRIPTS",
+            "MISSING_DATA",
+            "MISSING_CORE"
+          ]
+        },
+        "result_as_released": {
+          "$ref": "#/$defs/match",
+          "description": "Result with the release as published, no source edits."
+        },
+        "result_after_fixes": {
+          "$ref": "#/$defs/match",
+          "description": "Result after the agent's fixes."
+        },
+        "coverage": {
+          "enum": [
+            "FULL",
+            "SUBSET",
+            "SCALED_DOWN",
+            "NONE"
+          ]
+        },
+        "flags": {
+          "type": "array",
+          "description": "Optional.",
+          "items": {
+            "enum": [
+              "METHOD_MISMATCH",
+              "CODE_BUG",
+              "EVAL_MISMATCH",
+              "DATA_MISMATCH",
+              "BASELINE_STRONGER_THAN_REPORTED",
+              "RERUN_WEAKER_THAN_RELEASED"
+            ]
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "description": "Optional. One row per number compared with the paper; the site shows it as a table. Extra columns are allowed.",
+          "items": {
+            "type": "object",
+            "required": [
+              "source",
+              "metric",
+              "setting",
+              "paper",
+              "ours",
+              "match"
+            ],
+            "properties": {
+              "scope": {
+                "enum": [
+                  "main",
+                  "supplementary",
+                  null
+                ],
+                "description": "main: behind the paper's central claims; supplementary: ablations, appendix, ..."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Where the paper reports it, e.g. \"Table 2, SNIPS\"."
+              },
+              "metric": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "setting": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Method / condition, e.g. the model or baseline."
+              },
+              "paper": {
+                "description": "The paper's number."
+              },
+              "ours": {
+                "description": "Reproduced number after the agent's fixes."
+              },
+              "match": {
+                "$ref": "#/$defs/number_match"
+              },
+              "ours_as_released": {
+                "description": "Reproduced number with the release as published, if it was run."
+              },
+              "match_as_released": {
+                "$ref": "#/$defs/number_match"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
